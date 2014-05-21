@@ -11,7 +11,7 @@ from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import StopButton
 
 
-sys.path.append('..')  # Import sugargame package from top directory.
+#sys.path.append('..')  # Import sugargame package from top directory.
 import sugargame.canvas
 
 import TestGame
