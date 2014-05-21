@@ -1,15 +1,17 @@
 #!/usr/bin/python
 import pygame
 import random
-from gi.repository import Gtk
+#from gi.repository import Gtk
 
 defaultPanelColor = (220, 220, 220)
 prospectivePanelColor = (220, 200, 200)
 prospectiveGoalPanelColor = (255, 240, 240)
 goalPanelColor = (255, 250, 250)
-movesColor = (255, 150, 150)
+movesColor = (255, 180, 180)
 circleColor = (255, 100, 100)
-levelColor = (120, 120, 120)
+levelColor = (90, 90, 90)
+scoreColor = (255, 150, 150)
+
 left = 0
 right = 1
 up = 2
@@ -47,8 +49,8 @@ class TestGame:
         self.fontMedium = pygame.font.Font(pygame.font.get_default_font(), 20)
         self.fontLarge = pygame.font.Font(pygame.font.get_default_font(), 30)
 
-        self.textArray = [3*[0] for t in range(5)]
-        for i in range(5):
+        self.textArray = [3*[0] for t in range(25)]
+        for i in range(25):
             self.textArray[i][0] = self.fontSmall.render(str(i + 1), 1, (120, 120, 120), (220, 220, 220))
             self.textArray[i][1] = self.fontMedium.render(str(i + 1), 1, (120, 120, 120), (220, 220, 220))
             self.textArray[i][2] = self.fontLarge.render(str(i + 1), 1, (120, 120, 120), (220, 220, 220))
@@ -61,6 +63,8 @@ class TestGame:
 
         #This value represents the current level in the game
         self.level = 0;
+
+        self.score = 0;
 
         #Creates the first level in the game. This method adds 1 to the level, and creates a new array of squares for the player to navigate
         self.nextLevel();
@@ -99,8 +103,8 @@ class TestGame:
 
         while self.running:
             # Pump GTK messages.
-            while Gtk.events_pending():
-                Gtk.main_iteration()
+            #while Gtk.events_pending():
+                #Gtk.main_iteration()
 
             # Pump PyGame messages.
             for event in pygame.event.get():
@@ -147,11 +151,15 @@ class TestGame:
                 self.screenAlpha -= 5
                 
                 if self.screenAlpha <= 0:
+                    self.score += self.movesLeft;
                     self.nextLevel()
             else:
                 self.screenAlpha += 15
                 if self.movesLeft == 0:
                     self.level -= 1
+                    self.score -= 1
+                    if self.score < 0:
+                        self.score = 0
                     self.goToNextLevel = 1
 
 
@@ -268,6 +276,8 @@ class TestGame:
                 pygame.draw.rect(screen, (120, 120, 120), pygame.Rect((self.rectw * self.indexx) + self.xplus, self.recth * self.indexy, self.rectw - 2, self.recth - 2))
             pygame.draw.circle(screen, circleColor, (int(self.circlex), int(self.circley)), self.rectw / 3)
             screen.blit(self.movesSurface, (int(self.circlex - (self.movesSurface.get_width() / 2)), int(self.circley - (self.movesSurface.get_height() / 2))))
+            screen.blit(self.levelSurface, (24, 24))
+            screen.blit(self.scoreSurface, (screen.get_width() - self.scoreSurface.get_width() - 24, 24))
             # Flip Display
             pygame.display.flip()
 
@@ -278,26 +288,35 @@ class TestGame:
     def nextLevel(self):
         self.level += 1
         row = (self.level) + 3;
-        self.movesLeft = row;
+        self.movesLeft = row + 1;
         if (row%2) == 0:
             row += 1
         else:
             self.movesLeft -= 2
         self.controllable = 1;
         self.goToNextLevel = 0;
-        self.movesLeft = row;
         self.renderMoves()
+        self.renderLevel()
+        self.renderScore()
         print "Going to level with " + str(row) + " rows"
         self.createArray(row)
 
     def renderMoves(self):
         font = self.fontLarge;
-        if (self.rectw < 25):
-            self.fontSmall = 0
-        elif (self.rectw < 50):
-            self.fontLarge = 1
+        if ((self.rectw / 3) * 2 < 25):
+            font = self.fontSmall
+        elif ((self.rectw / 3) * 2 < 50):
+            font = self.fontLarge
         self.movesSurface = font.render(str(self.movesLeft), 1, (movesColor), circleColor )
         self.movesSurface.set_colorkey(circleColor)
+
+    def renderLevel(self):
+        self.levelSurface = self.fontLarge.render("Level " + str(self.level), 1, levelColor, (255,255,255))
+        self.levelSurface.set_colorkey((255,255,255))
+
+    def renderScore(self):
+        self.scoreSurface = self.fontLarge.render(str(self.score) + " points", 1, scoreColor, (255, 255, 255))
+        self.scoreSurface.set_colorkey((255, 255, 255))
 
     def createArray(self, rows):
         self.indexx = self.indexy = 0
@@ -313,7 +332,7 @@ class TestGame:
                 direction += 1
                 val = 1
                 if j == cent and i == cent :
-                    val = random.randrange(1, (rows / 2) + 1)
+                    val = random.randrange(1, (rows / 2))
                 elif direction%modNum == left or direction%modNum == right:
                     val = (cent - i) + 1
                 elif direction&modNum == up or direction%modNum == down:
