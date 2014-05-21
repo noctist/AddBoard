@@ -47,8 +47,8 @@ class TestGame:
         self.fontMedium = pygame.font.Font(pygame.font.get_default_font(), 20)
         self.fontLarge = pygame.font.Font(pygame.font.get_default_font(), 30)
 
-        self.textArray = [3*[0] for t in range(50)]
-        for i in range(50):
+        self.textArray = [3*[0] for t in range(5)]
+        for i in range(5):
             self.textArray[i][0] = self.fontSmall.render(str(i + 1), 1, (120, 120, 120), (220, 220, 220))
             self.textArray[i][1] = self.fontMedium.render(str(i + 1), 1, (120, 120, 120), (220, 220, 220))
             self.textArray[i][2] = self.fontLarge.render(str(i + 1), 1, (120, 120, 120), (220, 220, 220))
@@ -59,7 +59,7 @@ class TestGame:
             self.textArray[i][2].set_alpha(0)
             self.textArray[i][2].set_colorkey((220, 220, 220))
 
-        #This value represents the currently level in the game
+        #This value represents the current level in the game
         self.level = 0;
 
         #Creates the first level in the game. This method adds 1 to the level, and creates a new array of squares for the player to navigate
