@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import pygame
 import random
-#from gi.repository import Gtk
+from gi.repository import Gtk
 
 defaultPanelColor = (220, 220, 220)
 prospectivePanelColor = (220, 200, 200)
@@ -99,8 +99,8 @@ class TestGame:
 
         while self.running:
             # Pump GTK messages.
-            #while Gtk.events_pending():
-                #Gtk.main_iteration()
+            while Gtk.events_pending():
+                Gtk.main_iteration()
 
             # Pump PyGame messages.
             for event in pygame.event.get():
