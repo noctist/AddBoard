@@ -171,23 +171,6 @@ class TestGame:
 
             screen.set_alpha(self.screenAlpha)
 
-
-
-
-            # Move the ball
-            if not self.paused:
-                self.x += self.vx * self.direction
-                if self.direction == 1 and self.x > screen.get_width() + 100:
-                    self.x = -100
-                elif self.direction == -1 and self.x < -100:
-                    self.x = screen.get_width() + 100
-                self.y += self.vy
-                if self.y > screen.get_height() - 100:
-                    self.y = screen.get_height() - 100
-                    self.vy = -self.vy
-
-                self.vy += 5
-
             # Make sure the index values aren't out of the range of the array
             if self.indexx < 0:
                 self.indexx = 0
